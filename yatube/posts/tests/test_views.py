@@ -172,7 +172,7 @@ class PostViewsTests(TestCase):
                     response.context['page_obj'][0],
                     post_in_model,
                     f'На странице {reverse_name} '
-                    f'пост не найден'
+                    'пост не найден'
                 )
 
     def test_random_group_post(self):
@@ -208,14 +208,14 @@ class PostViewsTests(TestCase):
                     len(response.context['page_obj']),
                     POSTS_ON_PAGE,
                     f'На странице 1 шаблона {reverse_name} '
-                    f'паджинатор работает неверно'
+                    'паджинатор работает неверно'
                 )
                 response = self.client.get(reverse(INDEX) + '?page=2')
                 self.assertEqual(
                     len(response.context['page_obj']),
                     AMOUNT_TEST_POSTS - POSTS_ON_PAGE,
                     f'На странице 2 шаблона {reverse_name} '
-                    f'паджинатор работает неверно'
+                    'паджинатор работает неверно'
                 )
 
     def test_content_post(self):
@@ -266,25 +266,25 @@ class PostViewsTests(TestCase):
                     post.author,
                     post_in_model.author,
                     f'На странице шаблона {reverse_name} '
-                    f'автор поста не найден'
+                    'автор поста не найден'
                 )
                 self.assertEqual(
                     post.text,
                     post_in_model.text,
                     f'На странице шаблона {reverse_name} '
-                    f'текст пост не найден'
+                    'текст пост не найден'
                 )
                 self.assertEqual(
                     post.group,
                     post_in_model.group,
                     f'На странице шаблона {reverse_name} '
-                    f'группа поста не найдена'
+                    'группа поста не найдена'
                 )
                 self.assertEqual(
                     post.image,
                     post_in_model.image,
                     f'На странице шаблона {reverse_name} '
-                    f'картинка поста не найдена'
+                    'картинка поста не найдена'
                 )
 
     def test_add_comment(self):
@@ -325,16 +325,16 @@ class PostViewsTests(TestCase):
         self.assertEqual(
             posts_count,
             Post.objects.all().count(),
-            f'На странице шаблона index '
-            f'пост не найден'
+            'На странице шаблона index '
+            'пост не найден'
         )
         Post.objects.get(text='second text').delete()
         self.assertEqual(
             posts_count,
             Post.objects.all().count() + 1,
-            f'На странице шаблона index '
-            f'после удаления поста из базы'
-            f'пост не найден'
+            'На странице шаблона index '
+            'после удаления поста из базы'
+            'пост не найден'
         )
 
     def test_authorized_user_can_follow(self):
@@ -404,7 +404,9 @@ class PostViewsTests(TestCase):
             'Новая запись не появилась в ленте того,'
             'кто на неё подписан'
         )
-        new_response = PostViewsTests.new_authorized_client.get(reverse(FOLLOW_INDEX))
+        new_response = PostViewsTests.new_authorized_client.get(
+            reverse(FOLLOW_INDEX)
+        )
         new_post_in_page_unfollower = new_response.context['page_obj']
         self.assertEqual(
             len(new_post_in_page_unfollower),
