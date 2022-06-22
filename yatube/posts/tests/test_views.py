@@ -250,16 +250,16 @@ class PostViewsTests(TestCase):
         slug = post_in_model.group.slug
         username = post_in_model.author.username
         post_id = post_in_model.id
-        pages_names = [
-            reverse(INDEX),
-            reverse(GROUP_LIST, kwargs={'slug': slug}),
-            reverse(PROFILE, kwargs={'username': username}),
-            reverse(POST_DETAIL, kwargs={'post_id': post_id})
-        ]
-        for reverse_name in pages_names:
+        pages_names = {
+            'index': reverse(INDEX),
+            'group_slug': reverse(GROUP_LIST, kwargs={'slug': slug}),
+            'profile': reverse(PROFILE, kwargs={'username': username}),
+            'post_detail': reverse(POST_DETAIL, kwargs={'post_id': post_id})
+        }
+        for reverse_name in pages_names.values():
             with self.subTest(reverse_name=reverse_name):
                 response = self.client.get(reverse_name)
-                if reverse_name != pages_names[-1]:
+                if reverse_name != pages_names['post_detail']:
                     post = response.context['page_obj'][0]
                 else:
                     post = response.context['post']
@@ -308,34 +308,36 @@ class PostViewsTests(TestCase):
             'Количество комментариев изменилось'
         )
 
-    def test_cash_index(self):
+    def test_cache_index(self):
         """Кэш страницы index работает корректно"""
-        Post.objects.all().delete()
+        new_post = Post.objects.create(
+            author=PostViewsTests.user_author,
+            text='Новый тестовый текстик',
+        )
+        response_after_create = self.client.get(reverse(INDEX))
+        self.assertIn(
+            new_post,
+            response_after_create.context['page_obj'],
+            'На странице шаблона index '
+            'пост не найден'
+        )
+        new_post.delete()
+        response_after_delete = self.client.get(reverse(INDEX))
+        self.assertEqual(
+            response_after_delete.content,
+            response_after_create.content,
+            'На странице шаблона index '
+            'после удаления поста из базы '
+            'пост не найден'
+        )
         cache.clear()
-        test_text = 'first post'
-        Post.objects.create(
-            author=PostViewsTests.user_author,
-            text=test_text,
-        )
-        Post.objects.create(
-            author=PostViewsTests.user_author,
-            text='second text',
-        )
-        response = self.client.get(reverse(INDEX))
-        posts_count = len(response.context['page_obj'])
-        self.assertEqual(
-            posts_count,
-            Post.objects.all().count(),
+        response_after_delete_cache_cleared = self.client.get(reverse(INDEX))
+        self.assertNotEqual(
+            response_after_delete_cache_cleared.content,
+            response_after_create.content,
             'На странице шаблона index '
-            'пост не найден'
-        )
-        Post.objects.get(text='second text').delete()
-        self.assertEqual(
-            posts_count,
-            Post.objects.all().count() + 1,
-            'На странице шаблона index '
-            'после удаления поста из базы'
-            'пост не найден'
+            'после удаления поста из базы '
+            'и отчистки кэша, пост найден'
         )
 
     def test_authorized_user_can_follow(self):
