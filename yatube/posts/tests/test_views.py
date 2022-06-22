@@ -7,6 +7,7 @@ from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+
 from posts.models import Comment, Follow, Group, Post, User
 from posts.urls import (ADD_COMMENT, FOLLOW_INDEX, GROUP_LIST, INDEX,
                         POST_CREATE, POST_DETAIL, POST_EDITE, PROFILE,

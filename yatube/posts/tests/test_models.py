@@ -1,4 +1,5 @@
 from django.test import TestCase
+
 from posts.models import DISPLAYED_LETTERS, Group, Post, User
 
 

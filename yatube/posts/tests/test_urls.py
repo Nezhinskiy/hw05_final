@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
+
 from posts.models import Group, Post, User
 from posts.urls import (GROUP_LIST, INDEX, POST_CREATE, POST_DETAIL,
                         POST_EDITE, PROFILE)
