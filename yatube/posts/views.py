@@ -22,6 +22,7 @@ def index(request):
     page_obj = pagination(post_list, request)
     context = {
         'page_obj': page_obj,
+        'index': True
     }
     return render(request, template, context)
 
@@ -160,6 +161,7 @@ def follow_index(request):
     page_obj = pagination(post_list, request)
     context = {
         'page_obj': page_obj,
+        'follow': True
     }
     return render(request, template, context)
 
