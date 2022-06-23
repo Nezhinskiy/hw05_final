@@ -108,13 +108,13 @@ def post_edit(request, post_id):
         Post.objects.select_related('author', 'group'),
         id=post_id
     )
+    if request.user != post.author:
+        return redirect('posts:post_detail', post.id)
     form = PostForm(
         request.POST or None,
         files=request.FILES or None,
         instance=post
     )
-    if request.user != post.author:
-        return redirect('posts:post_detail', post.id)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
@@ -128,12 +128,12 @@ def post_edit(request, post_id):
 
 @login_required
 def post_delete(request, post_id):
-    author = get_object_or_404(
+    post = get_object_or_404(
         Post.objects.prefetch_related('author'),
         pk=post_id
-    ).author
-    if request.user == author:
-        Post.objects.get(pk=post_id).delete()
+    )
+    if request.user == post.author:
+        post.delete()
     return redirect('posts:profile', request.user.username)
 
 
