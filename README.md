@@ -20,7 +20,7 @@
 1. Клонируйте репозиторий и перейдите в него в командной строке:
 
 ```
-git clone https://github.com/evencatt/hw05_final.git
+git clone https://github.com/Nezhinskiy/hw05_final.git
 ```
 
 ```
